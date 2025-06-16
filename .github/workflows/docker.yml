@@ -1,4 +1,4 @@
-name: 构建并推送镜像
+name: 自动检测GsCore并构建
 
 on:
   schedule:
@@ -37,7 +37,8 @@ jobs:
 
       - name: 获取最新提交哈希
         id: last_commit
-        run: echo "::set-output name=hash::$(git rev-parse HEAD)"
+        run: |
+          echo "hash=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
 
       - name: 检查缓存是否存在
         id: cache
