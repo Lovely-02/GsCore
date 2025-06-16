@@ -22,10 +22,6 @@ jobs:
           ref: master # 要检测的分支
           fetch-depth: 0 # 完整克隆
 
-      - name: 获取最新提交哈希
-        id: last_commit
-        run: echo "::set-output name=hash::$(git rev-parse HEAD)"
-
       - name: 登录 Docker 镜像仓库
         uses: docker/login-action@v3
         with:
@@ -38,6 +34,10 @@ jobs:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 获取最新提交哈希
+        id: last_commit
+        run: echo "::set-output name=hash::$(git rev-parse HEAD)"
 
       - name: 检查缓存是否存在
         id: cache
@@ -68,7 +68,8 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         uses: docker/build-push-action@v5
         with:
-          file: Dockerfile
+          context: . # 指定构建上下文路径为项目根目录
+          file: Dockerfile # 指定使用国内镜像源的 Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ steps.meta.outputs.tags }}
@@ -76,4 +77,4 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
         env:
-          DOCKER_BUILDKIT: 1
+          DOCKER_BUILDKIT: 1 # 启用 BuildKit 以获取更详细的构建日志
