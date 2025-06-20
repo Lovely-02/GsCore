@@ -1,0 +1,12 @@
+services:
+  GsCore:
+    image: docker.1panel.live/lovely02/gsuid_core:main
+    container_name: GsCore
+    network_mode: host
+    privileged: true
+    restart: always
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      - ./data:/gsuid_core/data
+      - ./plugins:/gsuid_core/gsuid_core/plugins
